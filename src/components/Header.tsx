@@ -1,10 +1,12 @@
+import { signOut } from "firebase/auth";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.svg";
-
+import { auth } from "../config/firebase";
+import { useAuth } from "../context/UserContext";
 const Header: React.FC = () => {
     const [navbarOpen, setNavbarOpen] = useState(false);
-
+    const { user } = useAuth();
     return (
         <header className="flex w-full items-center bg-white dark:bg-[#0F172A]">
             <div className="container mx-auto">
@@ -61,22 +63,35 @@ const Header: React.FC = () => {
                                 </ul>
                             </nav>
                         </div>
-                        <div className="hidden justify-end pr-16 sm:flex lg:pr-0">
-                            <Link to="/login">
+
+                        {user ? (
+                            <div className="flex items-center gap-4">
+                                <span className="text-white">👤 {user.displayName || user.email}</span>
+                                <button
+                                    onClick={() => signOut(auth)}
+                                    className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
+                                >
+                                    Đăng xuất
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="hidden justify-end pr-16 sm:flex lg:pr-0">
+                                <Link to="/login">
+                                    <a
+                                        href="#"
+                                        className="bg-blue-700 px-7 py-3 text-base font-medium text-gray-700 hover:text-gray-500 dark:text-white"
+                                    >
+                                        Login
+                                    </a>
+                                </Link>
                                 <a
                                     href="#"
-                                    className="bg-blue-700 px-7 py-3 text-base font-medium text-gray-700 hover:text-gray-500 dark:text-white"
+                                    className="rounded-md bg-blue-700 px-7 py-3 text-base font-medium text-white hover:bg-blue-900"
                                 >
-                                    Login
+                                    Sign Up
                                 </a>
-                            </Link>
-                            <a
-                                href="#"
-                                className="rounded-md bg-blue-700 px-7 py-3 text-base font-medium text-white hover:bg-blue-900"
-                            >
-                                Sign Up
-                            </a>
-                        </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
