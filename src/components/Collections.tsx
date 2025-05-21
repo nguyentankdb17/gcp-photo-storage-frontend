@@ -11,15 +11,28 @@ const Collections: React.FC = () => {
         const auth = getAuth();
         const user = auth.currentUser;
 
-        if (!user) return;
+        if (!user) {
+            console.warn("User not authenticated");
+            return;
+        }
 
         const idToken = await user.getIdToken();
-
+        console.log("ID Token:", idToken);
+        console.log("User ID:", user.uid);
+        console.log("user", user);
         const response = await fetch("https://get-images-metadata-function-432052083194.asia-southeast1.run.app/", {
+            method: "GET",
             headers: {
-                Authorization: `Bearer ${idToken}`,
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${idToken}`,
             },
         });
+
+        if (!response.ok) {
+            const text = await response.text(); // lấy raw text để debug
+            console.error("Server error:", response.status, text);
+            return;
+        }
 
         const data = await response.json();
         setImages(data);

@@ -1,8 +1,8 @@
+import { getAuth } from "firebase/auth";
 import React, { useEffect, useRef, useState } from "react";
 import DropdownButton from "./dropdownButton";
 import ImagePreview from "./imagePreview";
 import SuccessMessage from "./successMessage";
-
 const FileUpload: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [file, setFile] = useState<File | null>(null);
@@ -22,20 +22,39 @@ const FileUpload: React.FC = () => {
     };
 
     const uploadFile = async (file: File) => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        if (!user) {
+            console.error("No user logged in");
+            throw new Error("User not logged in");
+        }
+
+        const idToken = await user.getIdToken(); // Lấy token Firebase
+        console.log("ID Token for upload:", idToken); // Debug token
+
         const formData = new FormData();
         formData.append("image", file);
+
         try {
             const response = await fetch("https://upload-image-function-432052083194.asia-southeast1.run.app", {
                 method: "POST",
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                },
                 body: formData,
             });
+
             if (!response.ok) {
+                const errorText = await response.text();
+                console.error("Server error:", response.status, errorText);
                 throw new Error("File upload failed");
             }
+
             setMessageVisible(true);
-            console.log("File uploaded successfully:");
+            console.log("File uploaded successfully:", await response.json());
         } catch (error) {
             console.error("Error uploading file:", error);
+            throw error; // Đảm bảo lỗi được xử lý bên ngoài nếu cần
         }
     };
 
