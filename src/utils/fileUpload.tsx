@@ -1,6 +1,5 @@
 import { getAuth } from "firebase/auth";
 import React, { useEffect, useRef, useState } from "react";
-// import DropdownButton from "./dropdownButton";
 import ImagePreview from "./imagePreview";
 import Loading from "./Loading";
 import SuccessMessage from "./successMessage";
@@ -136,7 +135,7 @@ const FileUpload: React.FC = () => {
                                         </svg>
                                     </div>
 
-                                    <h3 className="mb-3 text-xl font-bold text-white">Drop File Here</h3>
+                                    <h3 className="mb-3 text-xl font-bold text-white">Drop Image Here</h3>
                                     <p className="mb-5 text-base text-gray-400">
                                         Drag and drop your PNG, JPG, WebP, SVG image here
                                         <p>or browse</p>
@@ -167,12 +166,18 @@ const FileUpload: React.FC = () => {
                                                 <div className="relative mb-8 inline-block text-left">
                                                     <button
                                                         onClick={handleUpload}
-                                                        className="flex items-center rounded-[5px] bg-blue-500 px-5 py-[13px] text-base font-medium text-white"
+                                                        className="flex cursor-pointer items-center rounded-[5px] bg-blue-500 px-5 py-[13px] text-base font-medium text-white hover:scale-110 hover:bg-blue-700"
                                                     >
-                                                        LABEL THE IMAGE
+                                                        LABEL IMAGE
                                                     </button>
                                                 </div>
                                             </div>
+                                            {errorMessage === "" && (
+                                                <p className="mb-5 text-base text-white">
+                                                    Your image will be processed and automatically saved in your
+                                                    collection.
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

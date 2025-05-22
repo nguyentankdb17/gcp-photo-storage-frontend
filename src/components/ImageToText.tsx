@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import Loading from "../utils/Loading.tsx";
+import SuccessMessage from "../utils/successMessage.tsx";
 
 interface OCRBox {
     x: number;
@@ -20,17 +21,26 @@ const ImageToText: React.FC = () => {
     const [isMountDown, setIsMountDown] = useState(false);
     const [startX, setStartX] = useState(0);
     const [startY, setStartY] = useState(0);
+    const [messageVisible, setMessageVisible] = useState(false);
+    const [message, setMessage] = useState("");
 
     const handleButtonClick = () => {
         fileInputRef.current?.click();
     };
 
-    const handleCopy = () => {
+    const handleCopy = async () => {
         if (textAreaRef.current) {
-            navigator.clipboard
-                .writeText(textAreaRef.current.value)
-                .then(() => alert("Đã copy vào clipboard!"))
-                .catch(() => alert("Copy thất bại!"));
+            try {
+                await navigator.clipboard.writeText(textAreaRef.current.value);
+                setMessageVisible(true);
+                setMessage("Copied to clipboard successfully!");
+                setTimeout(() => {
+                    setMessageVisible(false);
+                }, 3000);
+            } catch (err) {
+                console.error("Error copied:", err);
+                alert("Copy unsuccessfully.");
+            }
         }
     };
 
@@ -155,11 +165,31 @@ const ImageToText: React.FC = () => {
         );
     };
 
+    const restart = () => {
+        setImg(null);
+        setText("");
+        setBoxes([]);
+        setIsLoading(false);
+        const canvas = canvasRef.current;
+        if (canvas) {
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+        if (textAreaRef.current) {
+            textAreaRef.current.value = "";
+        }
+    };
+
     return (
         <div className="relative flex flex-col items-center bg-[#0F172A] pt-10">
-            <div className="container flex w-full gap-4">
-                <div className="w-1/3">
-                    <div className="relative mx-0 w-full max-w-[570px] rounded-[20px] bg-white/10 p-4 shadow-lg">
+            {!img && (
+                <div>
+                    <div className="relative w-full max-w-md rounded-[20px] bg-white/10 p-4 shadow-lg">
                         <div className="border-dark-6 relative z-10 flex min-h-[328px] items-center justify-center rounded-2xl border border-dashed bg-white/10 p-6 md:p-10">
                             <div className="w-full text-center">
                                 <div>
@@ -192,48 +222,91 @@ const ImageToText: React.FC = () => {
                                         </svg>
                                     </div>
 
-                                    <h3 className="mb-3 text-xl font-bold text-white">Drop File Here</h3>
+                                    <h3 className="mb-3 text-xl font-bold text-white">Drop Image Here</h3>
                                     <p className="mb-5 text-base text-gray-400">
-                                        Drag and drop your PNG, JPG, WebP, SVG image here
-                                        <p>or browse</p>
+                                        Drag and drop your PNG, JPG, WebP, SVG image here or browse
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="flex h-90 w-2/3 items-center justify-center">
-                    {isLoading ? (
-                        <Loading />
-                    ) : (
-                        img && (
-                            <div className="rounded bg-[#0F172A] p-4">
-                                <div className="flex items-center">
-                                    <textarea
-                                        ref={textAreaRef}
-                                        value={text}
-                                        readOnly
-                                        className="h-[300px] w-[700px] resize-none rounded border border-gray-500 bg-[#0F172A] p-3 text-white focus:outline-none"
-                                    />
-                                    <button
-                                        onClick={handleCopy}
-                                        className="ml-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-                                    >
-                                        Copy
-                                    </button>
-                                </div>
+            )}
+            {img && (
+                <div className="container flex w-full gap-4">
+                    <div className="w-1/3">
+                        <div className="relative mx-0 w-full max-w-[570px] rounded-[20px] bg-white/10 p-4 shadow-lg">
+                            <div className="border-dark-6 relative z-10 flex min-h-[328px] flex-col items-center justify-center space-y-5 rounded-2xl border border-dashed bg-white/10 p-6 md:p-10">
+                                <h1 className="text-2xl font-bold text-white">Original Image</h1>
+                                <img src={img.src} className="h-48 w-full rounded-lg object-fill" />
                             </div>
-                        )
-                    )}
+                        </div>
+                    </div>
+                    <div className="flex h-90 w-2/3 items-center justify-center">
+                        {isLoading ? (
+                            <Loading />
+                        ) : (
+                            img && (
+                                <div className="rounded bg-[#0F172A] p-4">
+                                    <div className="flex items-center">
+                                        <textarea
+                                            ref={textAreaRef}
+                                            value={text}
+                                            onChange={(e) => setText(e.target.value)}
+                                            className="h-[300px] w-[700px] resize-none rounded border border-gray-500 bg-[#0F172A] p-3 text-white focus:outline-none"
+                                        />
+                                        <div className="flex flex-col items-center space-y-10">
+                                            <button
+                                                onClick={handleCopy}
+                                                title="Copy to clipboard"
+                                                className="ml-4 cursor-pointer rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 24 24"
+                                                    width="1.5em"
+                                                    height="1.5em"
+                                                >
+                                                    <path
+                                                        fill="currentColor"
+                                                        d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2m0 16H8V7h11z"
+                                                    ></path>
+                                                </svg>
+                                            </button>
+                                            <button
+                                                onClick={restart}
+                                                title="Restart"
+                                                className="ml-4 cursor-pointer rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 24 24"
+                                                    width="1.5em"
+                                                    height="1.5em"
+                                                >
+                                                    <path
+                                                        fill="currentColor"
+                                                        d="M12 5V2L8 6l4 4V7c3.31 0 6 2.69 6 6c0 2.97-2.17 5.43-5 5.91v2.02c3.95-.49 7-3.85 7-7.93c0-4.42-3.58-8-8-8m-6 8c0-1.65.67-3.15 1.76-4.24L6.34 7.34A8 8 0 0 0 4 13c0 4.08 3.05 7.44 7 7.93v-2.02c-2.83-.48-5-2.94-5-5.91"
+                                                    ></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        )}
+                    </div>
                 </div>
-            </div>
+            )}
+
             <canvas
                 ref={canvasRef}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
-                className="mt-10"
+                className="max-h-4xl mt-10 max-w-4xl"
             />
+            {messageVisible && <SuccessMessage message={message} duration={3000} />}
         </div>
     );
 };
