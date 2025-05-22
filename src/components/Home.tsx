@@ -1,23 +1,27 @@
 import React from "react";
 import FileUpload from "../utils/fileUpload";
+import { Link } from "react-router-dom";
 
 const Home: React.FC = () => {
     const cards = [
         {
             image: "/cloud_storage.png",
             title: "Cloud Image Storage",
+            destination: "/collections",
             description:
                 "Securely upload, organize, and manage images in the cloud with fast access while keeping your data safe and always available.",
         },
         {
             image: "/text_labeling.jpg",
             title: "Image Labeling",
+            destination: "/",
             description:
                 "Efficiently annotate images with labels—manually or automatically—to support tasks like classification and training AI models.",
         },
         {
             image: "/ocr.png",
             title: "Image To Text",
+            destination: "/ocr",
             description:
                 "Automatically extract text from images using OCR technology, enabling searchable, editable, and structured data from visual content.",
         },
@@ -83,25 +87,34 @@ const Home: React.FC = () => {
                         <div className="-mx-4 flex flex-wrap">
                             {cards.map((card, index) => (
                                 <div key={index} className="w-full px-4 md:w-1/2 xl:w-1/3">
-                                    <div className="shadow-1 hover:shadow-3 mb-10 overflow-hidden rounded-lg bg-[#1B2532] duration-300">
-                                        <div className="h-52 max-w-md overflow-hidden">
-                                            <img
-                                                src={card.image}
-                                                alt="card image"
-                                                className="h-full w-full object-cover"
-                                            />
+                                    <Link to={card.destination}>
+                                        <div
+                                            className="shadow-1 hover:shadow-3 mb-10 overflow-hidden rounded-lg bg-[#1B2532] duration-300 hover:scale-110"
+                                            onClick={() => {
+                                                if (card.destination === "/") {
+                                                    window.scrollTo({ top: 200, behavior: "smooth" });
+                                                }
+                                            }}
+                                        >
+                                            <div className="h-52 max-w-md overflow-hidden">
+                                                <img
+                                                    src={card.image}
+                                                    alt="card image"
+                                                    className="h-full w-full object-cover"
+                                                />
+                                            </div>
+                                            <div className="p-8 text-center sm:p-9 md:p-7 xl:p-9">
+                                                <h3>
+                                                    <a className="hover:text-primary 2xl:text-[22px mb-4 block text-xl font-semibold text-white sm:text-[22px] md:text-xl lg:text-[22px] xl:text-xl">
+                                                        {card.title}
+                                                    </a>
+                                                </h3>
+                                                <p className="mb-7 text-base leading-relaxed text-gray-500">
+                                                    {card.description}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="p-8 text-center sm:p-9 md:p-7 xl:p-9">
-                                            <h3>
-                                                <a className="hover:text-primary 2xl:text-[22px mb-4 block text-xl font-semibold text-white sm:text-[22px] md:text-xl lg:text-[22px] xl:text-xl">
-                                                    {card.title}
-                                                </a>
-                                            </h3>
-                                            <p className="mb-7 text-base leading-relaxed text-gray-500">
-                                                {card.description}
-                                            </p>
-                                        </div>
-                                    </div>
+                                    </Link>
                                 </div>
                             ))}
                         </div>
