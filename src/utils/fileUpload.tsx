@@ -137,8 +137,9 @@ const FileUpload: React.FC = () => {
                                     </div>
 
                                     <h3 className="mb-3 text-xl font-bold text-white">Drop File Here</h3>
-                                    <p className="mb-5 max-w-sm text-base text-gray-400">
-                                        Drag and drop your PNG, JPG, WebP, SVG image here or browse
+                                    <p className="mb-5 text-base text-gray-400">
+                                        Drag and drop your PNG, JPG, WebP, SVG image here
+                                        <p>or browse</p>
                                     </p>
                                 </div>
                             )}

@@ -4,19 +4,19 @@ import FileUpload from "../utils/fileUpload";
 const Home: React.FC = () => {
     const cards = [
         {
-            image: "src/assets/cloud_storage.png",
+            image: "/cloud_storage.png",
             title: "Cloud Image Storage",
             description:
                 "Securely upload, organize, and manage images in the cloud with fast access while keeping your data safe and always available.",
         },
         {
-            image: "src/assets/text_labeling.jpg",
+            image: "/text_labeling.jpg",
             title: "Image Labeling",
             description:
                 "Efficiently annotate images with labels—manually or automatically—to support tasks like classification and training AI models.",
         },
         {
-            image: "src/assets/ocr.png",
+            image: "/ocr.png",
             title: "Image To Text",
             description:
                 "Automatically extract text from images using OCR technology, enabling searchable, editable, and structured data from visual content.",
@@ -24,7 +24,7 @@ const Home: React.FC = () => {
     ];
 
     return (
-        <div className="relative flex flex-col items-center bg-white pt-10 dark:bg-[#0F172A]">
+        <div className="relative flex flex-col items-center bg-[#0F172A] pt-10">
             <div className="container mx-auto">
                 <div className="-mx-4 flex flex-wrap items-center">
                     {/* Left side content */}
@@ -49,7 +49,7 @@ const Home: React.FC = () => {
                     <div className="w-full px-4 lg:w-6/12">
                         <div className="lg:ml-auto lg:text-right">
                             <div className="relative z-10 inline-block">
-                                <img src="src\assets\background.png" className="max-w-full rounded-2xl lg:ml-auto" />
+                                <img src="/background.png" className="max-w-full rounded-2xl lg:ml-auto" />
                                 <span className="absolute -bottom-8 -left-8 z-[-1]">
                                     <svg
                                         width="93"

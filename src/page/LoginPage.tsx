@@ -18,7 +18,7 @@ const AuthForm: React.FC = () => {
     };
 
     return (
-        <section className="flex flex-col items-center bg-[#0F172A] py-15">
+        <section className="flex h-screen flex-col items-center bg-[#0F172A] py-15">
             <div className="container">
                 <div className="relative mx-auto w-full max-w-lg rounded-[20px] bg-white/10 p-4 shadow-lg">
                     <div className="border-dark-6 relative z-10 flex min-h-[328px] items-center justify-center rounded-2xl border border-dashed bg-white/10 p-6 md:p-10">
