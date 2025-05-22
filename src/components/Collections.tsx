@@ -24,7 +24,7 @@ const Collections: React.FC = () => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${idToken}`,
+                Authorization: `Bearer ${idToken}`,
             },
         });
 
