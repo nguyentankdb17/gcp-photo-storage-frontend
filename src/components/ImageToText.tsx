@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState } from "react";
 import Loading from "../utils/Loading.tsx";
 
 interface OCRBox {
@@ -13,25 +13,26 @@ const ImageToText: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
-    const [text, setText] = useState('');
+    const [text, setText] = useState("");
     const [img, setImg] = useState<HTMLImageElement | null>(null);
     const [boxes, setBoxes] = useState<OCRBox[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isMountDown, setIsMountDown] = useState(false);
     const [startX, setStartX] = useState(0);
     const [startY, setStartY] = useState(0);
-    
+
     const handleButtonClick = () => {
         fileInputRef.current?.click();
     };
 
     const handleCopy = () => {
         if (textAreaRef.current) {
-            navigator.clipboard.writeText(textAreaRef.current.value)
+            navigator.clipboard
+                .writeText(textAreaRef.current.value)
                 .then(() => alert("Đã copy vào clipboard!"))
                 .catch(() => alert("Copy thất bại!"));
         }
-    }
+    };
 
     const chooseFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -64,7 +65,7 @@ const ImageToText: React.FC = () => {
             setIsLoading(false);
             const result = await response.json();
             setBoxes(result.boxes);
-            const selectedText = result.boxes.map((box: { text: string }) => box.text).join(' ');
+            const selectedText = result.boxes.map((box: { text: string }) => box.text).join(" ");
             setText(selectedText);
 
             // Draw boxes
@@ -75,7 +76,7 @@ const ImageToText: React.FC = () => {
             });
         };
         reader.readAsDataURL(file);
-    }
+    };
 
     const handleMouseDown = async (e: React.MouseEvent) => {
         setIsMountDown(true);
@@ -84,7 +85,7 @@ const ImageToText: React.FC = () => {
         const rect = canvas.getBoundingClientRect();
         setStartX(e.clientX - rect.left);
         setStartY(e.clientY - rect.top);
-    }
+    };
 
     const handleMouseUp = async (e: React.MouseEvent) => {
         if (!isMountDown) return;
@@ -92,23 +93,22 @@ const ImageToText: React.FC = () => {
         const canvas = canvasRef.current;
         if (!canvas) return;
         const rect = canvas.getBoundingClientRect();
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         if (!ctx) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (!img) return
+        if (!img) return;
         ctx.drawImage(img, 0, 0);
-        boxes.forEach(box => {
-            ctx.strokeStyle = 'red';
+        boxes.forEach((box) => {
+            ctx.strokeStyle = "red";
             ctx.strokeRect(box.x, box.y, box.width, box.height);
         });
         const selectedText = boxes
-            .filter(box => isInsideSelectedZone(box, startX, startY,
-                e.clientX - rect.left, e.clientY - rect.top))
-            .map(box => box.text)
-            .join(' ');
+            .filter((box) => isInsideSelectedZone(box, startX, startY, e.clientX - rect.left, e.clientY - rect.top))
+            .map((box) => box.text)
+            .join(" ");
 
         setText(selectedText);
-    }
+    };
 
     const handleMouseMove = (e: React.MouseEvent) => {
         if (!isMountDown) return;
@@ -117,13 +117,13 @@ const ImageToText: React.FC = () => {
         const rect = canvas.getBoundingClientRect();
         const currentX = e.clientX - rect.left;
         const currentY = e.clientY - rect.top;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         if (!ctx) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (!img) return
+        if (!img) return;
         ctx.drawImage(img, 0, 0);
-        boxes.forEach(box => {
-            ctx.strokeStyle = 'red';
+        boxes.forEach((box) => {
+            ctx.strokeStyle = "red";
             ctx.strokeRect(box.x, box.y, box.width, box.height);
         });
 
@@ -132,12 +132,12 @@ const ImageToText: React.FC = () => {
         const y = Math.min(startY, currentY);
         const width = Math.abs(currentX - startX);
         const height = Math.abs(currentY - startY);
-        ctx.fillStyle = 'rgba(0, 0, 255, 0.3)';
+        ctx.fillStyle = "rgba(0, 0, 255, 0.3)";
         ctx.fillRect(x, y, width, height);
-        ctx.strokeStyle = 'blue';
+        ctx.strokeStyle = "blue";
         ctx.lineWidth = 1;
         ctx.strokeRect(x, y, width, height);
-    }
+    };
 
     const isInsideSelectedZone = (box: OCRBox, x1: number, y1: number, x2: number, y2: number) => {
         const p_startX = Math.min(x1, x2);
@@ -148,10 +148,12 @@ const ImageToText: React.FC = () => {
             (box.x >= p_startX && box.x <= p_endX && box.y >= p_startY && box.y <= p_endY) ||
             (box.x + box.width >= p_startX && box.x + box.width <= p_endX && box.y >= p_startY && box.y <= p_endY) ||
             (box.x >= p_startX && box.x <= p_endX && box.y + box.height >= p_startY && box.y + box.height <= p_endY) ||
-            (box.x + box.width >= p_startX && box.x + box.width <= p_endX &&
-                box.y + box.height >= p_startY && box.y + box.height <= p_endY)
+            (box.x + box.width >= p_startX &&
+                box.x + box.width <= p_endX &&
+                box.y + box.height >= p_startY &&
+                box.y + box.height <= p_endY)
         );
-    }
+    };
 
     return (
         <div className="relative flex flex-col items-center bg-[#0F172A] pt-10">
@@ -200,7 +202,7 @@ const ImageToText: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                <div className="flex w-2/3 items-center justify-center h-90">
+                <div className="flex h-90 w-2/3 items-center justify-center">
                     {isLoading ? (
                         <Loading />
                     ) : (
@@ -211,11 +213,11 @@ const ImageToText: React.FC = () => {
                                         ref={textAreaRef}
                                         value={text}
                                         readOnly
-                                        className="w-[700px] h-[300px] resize-none rounded border border-gray-500 bg-[#0F172A] p-3 text-white focus:outline-none"
+                                        className="h-[300px] w-[700px] resize-none rounded border border-gray-500 bg-[#0F172A] p-3 text-white focus:outline-none"
                                     />
                                     <button
                                         onClick={handleCopy}
-                                        className="ml-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                        className="ml-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
                                     >
                                         Copy
                                     </button>
