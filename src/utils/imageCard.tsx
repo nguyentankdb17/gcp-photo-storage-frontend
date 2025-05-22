@@ -1,11 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import type { Image } from "../type/types";
+import PopUp from "./PopUp";
 
 type ImageCardProps = {
     cards: Image[];
 };
 
 const ImageCard: React.FC<ImageCardProps> = ({ cards }) => {
+    const [open, setOpen] = useState<boolean>(false);
+    const [selectedImage, setSelectedImage] = useState<Image | null>(null);
+
+    const openPopUp = (image: Image) => {
+        setSelectedImage(image);
+        setOpen(true);
+    };
+
+    const closePopUp = () => {
+        setOpen(false);
+        setSelectedImage(null);
+    };
+
     return (
         <div>
             <section className="bg-gray-2 dark:bg-dark mt-5">
@@ -33,7 +47,10 @@ const ImageCard: React.FC<ImageCardProps> = ({ cards }) => {
                                     </div>
                                     <div className="flex flex-col items-center pb-5">
                                         <div className="flex flex-row space-x-5">
-                                            <button className="cursor-pointer rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
+                                            <button
+                                                onClick={() => openPopUp(card)}
+                                                className="cursor-pointer rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+                                            >
                                                 View
                                             </button>
                                             <button className="cursor-pointer rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700">
@@ -42,6 +59,13 @@ const ImageCard: React.FC<ImageCardProps> = ({ cards }) => {
                                         </div>
                                     </div>
                                 </div>
+                                {selectedImage && (
+                                    <PopUp
+                                        openPopUp={open}
+                                        closePopUp={closePopUp}
+                                        imageUrl={selectedImage.signedUrl}
+                                    />
+                                )}
                             </div>
                         ))}
                     </div>
