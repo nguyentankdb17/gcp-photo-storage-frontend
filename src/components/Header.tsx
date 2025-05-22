@@ -1,9 +1,9 @@
 import { signOut } from "firebase/auth";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../assets/logo.svg";
 import { auth } from "../config/firebase";
 import { useAuth } from "../context/UserContext";
+import logo from "/logo.svg";
 const Header: React.FC = () => {
     const [navbarOpen, setNavbarOpen] = useState(false);
     const { user } = useAuth();
