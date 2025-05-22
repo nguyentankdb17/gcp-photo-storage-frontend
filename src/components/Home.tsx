@@ -24,7 +24,7 @@ const Home: React.FC = () => {
     ];
 
     return (
-        <div className="relative flex flex-col items-center bg-white pt-10 dark:bg-[#0F172A]">
+        <div className="relative flex flex-col items-center bg-[#0F172A] pt-10">
             <div className="container mx-auto">
                 <div className="-mx-4 flex flex-wrap items-center">
                     {/* Left side content */}

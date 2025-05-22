@@ -8,7 +8,7 @@ const Header: React.FC = () => {
     const [navbarOpen, setNavbarOpen] = useState(false);
     const { user } = useAuth();
     return (
-        <header className="flex w-full items-center bg-white dark:bg-[#0F172A]">
+        <header className="flex w-full items-center bg-[#0F172A]">
             <div className="container mx-auto">
                 <div className="relative -mx-4 flex items-center justify-between">
                     <div className="w-60 max-w-full px-4">
@@ -22,13 +22,13 @@ const Header: React.FC = () => {
                                 id="navbarCollapse"
                                 className={`${
                                     !navbarOpen ? "hidden" : ""
-                                } dark:bg-dark-2 absolute top-full right-4 w-full max-w-[250px] rounded-lg bg-white px-6 py-5 shadow lg:static lg:block lg:w-full lg:max-w-full lg:shadow-none lg:dark:bg-transparent`}
+                                } absolute top-full right-4 w-full max-w-[250px] rounded-lg px-6 py-5 shadow lg:static lg:block lg:w-full lg:max-w-full lg:shadow-none lg:dark:bg-transparent`}
                             >
                                 <ul className="block lg:flex">
                                     <li>
                                         <Link
                                             to="/"
-                                            className="text-body-color hover:text-dark flex py-2 text-base font-medium lg:ml-12 lg:inline-flex dark:text-gray-500 dark:hover:text-white"
+                                            className="flex py-2 text-base font-medium text-gray-500 hover:text-white lg:ml-12 lg:inline-flex"
                                         >
                                             Home
                                         </Link>
@@ -36,7 +36,7 @@ const Header: React.FC = () => {
                                     <li>
                                         <Link
                                             to="/collections"
-                                            className="text-body-color hover:text-dark flex py-2 text-base font-medium lg:ml-12 lg:inline-flex dark:text-gray-500 dark:hover:text-white"
+                                            className="flex py-2 text-base font-medium text-gray-500 hover:text-white lg:ml-12 lg:inline-flex"
                                         >
                                             Your Collections
                                         </Link>

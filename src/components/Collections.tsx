@@ -55,17 +55,15 @@ const Collections: React.FC = () => {
 
     if (!isAuthenticated) {
         return (
-            <div className="flex h-full items-center justify-center bg-white py-64 dark:bg-[#0F172A]">
-                <h1 className="text-4xl font-bold text-gray-800 dark:text-white">
-                    PLEASE LOG IN TO VIEW YOUR COLLECTIONS.
-                </h1>
+            <div className="flex h-full items-center justify-center bg-[#0F172A] py-64">
+                <h1 className="text-4xl font-bold text-gray-800 text-white">PLEASE LOG IN TO VIEW YOUR COLLECTIONS.</h1>
             </div>
         );
     }
 
     return (
         <div>
-            <div className="flex flex-col items-center justify-center bg-white dark:bg-[#0F172A]">
+            <div className="flex flex-col items-center justify-center bg-[#0F172A]">
                 <div>
                     <h1 className="py-5 text-4xl font-bold text-white">Your Image Collections</h1>
                 </div>
