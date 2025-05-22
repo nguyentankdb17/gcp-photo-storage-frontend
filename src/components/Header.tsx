@@ -41,6 +41,14 @@ const Header: React.FC = () => {
                                             Your Collections
                                         </Link>
                                     </li>
+                                    <li>
+                                        <Link
+                                            to="/ocr"
+                                            className="flex py-2 text-base font-medium text-gray-500 hover:text-white lg:ml-12 lg:inline-flex"
+                                        >
+                                            Image to Text
+                                        </Link>
+                                    </li>
                                 </ul>
                             </nav>
                         </div>

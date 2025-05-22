@@ -1,6 +1,6 @@
 import { getAuth } from "firebase/auth";
 import React, { useEffect, useRef, useState } from "react";
-import DropdownButton from "./dropdownButton";
+// import DropdownButton from "./dropdownButton";
 import ImagePreview from "./imagePreview";
 import Loading from "./Loading";
 import SuccessMessage from "./successMessage";
@@ -161,7 +161,20 @@ const FileUpload: React.FC = () => {
                                     <div className="block h-px w-full bg-white/10"></div>
                                 </div>
                                 <div className="z-10 w-full">
-                                    <DropdownButton onClick={handleUpload} />
+                                    <div className="-mx-4 flex flex-wrap">
+                                        <div className="w-full px-4">
+                                            <div className="py-3 text-center">
+                                                <div className="relative mb-8 inline-block text-left">
+                                                    <button
+                                                        onClick={handleUpload}
+                                                        className="flex items-center rounded-[5px] bg-blue-500 px-5 py-[13px] text-base font-medium text-white"
+                                                    >
+                                                        LABEL THE IMAGE
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 {errorMessage != "" && <div className="mt-4 text-sm text-red-500">{errorMessage}</div>}
                             </div>
