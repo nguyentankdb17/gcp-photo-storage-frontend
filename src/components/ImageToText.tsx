@@ -23,9 +23,30 @@ const ImageToText: React.FC = () => {
     const [startY, setStartY] = useState(0);
     const [messageVisible, setMessageVisible] = useState(false);
     const [message, setMessage] = useState("");
+    const [isDraggingOver, setIsDraggingOver] = useState(false);
 
     const handleButtonClick = () => {
         fileInputRef.current?.click();
+    };
+
+    const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        setIsDraggingOver(true);
+    };
+
+    const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        setIsDraggingOver(false);
+    };
+
+    const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setIsDraggingOver(false);
+        const files = event.dataTransfer.files;
+        if (files && files.length > 0) {
+            await processFile(files[0]);
+        }
     };
 
     const handleCopy = async () => {
@@ -46,6 +67,12 @@ const ImageToText: React.FC = () => {
 
     const chooseFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
+        if (file) {
+            await processFile(file);
+        }
+    };
+
+    const processFile = async (file: File) => {
         if (!file) return;
         setIsLoading(true);
         setBoxes([]);
@@ -188,8 +215,19 @@ const ImageToText: React.FC = () => {
     return (
         <div className="relative flex flex-col items-center bg-[#0F172A] pt-10">
             {!img && (
-                <div>
-                    <div className="relative w-full max-w-md rounded-[20px] bg-white/10 p-4 shadow-lg">
+                <div
+                    className={`relative w-full max-w-md rounded-[20px] border-2 bg-white/10 p-4 shadow-lg transition-all duration-300 ease-in-out ${
+                        isDraggingOver ? "border-blue-500" : "border-white/10"
+                    }`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                >
+                    <div
+                        className={`transition-all duration-300 ease-in-out ${
+                            isDraggingOver ? "opacity-50 blur-sm filter" : "opacity-100 filter-none"
+                        }`}
+                    >
                         <div className="border-dark-6 relative z-10 flex min-h-[328px] items-center justify-center rounded-2xl border border-dashed bg-white/10 p-6 md:p-10">
                             <div className="w-full text-center">
                                 <div>
@@ -230,8 +268,30 @@ const ImageToText: React.FC = () => {
                             </div>
                         </div>
                     </div>
+
+                    {isDraggingOver && (
+                        <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center rounded-[20px] bg-slate-900/70">
+                            <svg
+                                className="mb-4 h-20 w-20 animate-bounce text-blue-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="1.5"
+                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                ></path>
+                            </svg>
+                            <h3 className="text-3xl font-bold text-white">Drop Image Here</h3>
+                            <p className="mt-2 text-lg text-blue-200">Release to upload the image</p>
+                        </div>
+                    )}
                 </div>
             )}
+
             {img && (
                 <div className="container flex w-full gap-4">
                     <div className="w-1/3">
