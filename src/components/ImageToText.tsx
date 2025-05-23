@@ -1,6 +1,9 @@
 import React, { useRef, useState } from "react";
+import FailureMessage from "../utils/failureMessage.tsx";
 import Loading from "../utils/Loading.tsx";
 import SuccessMessage from "../utils/successMessage.tsx";
+
+const ALLOWED_OCR_IMAGE_TYPES = ["image/jpeg", "image/png", "image/bmp", "image/webp", "image/tiff"];
 
 interface OCRBox {
     x: number;
@@ -21,7 +24,8 @@ const ImageToText: React.FC = () => {
     const [isMountDown, setIsMountDown] = useState(false);
     const [startX, setStartX] = useState(0);
     const [startY, setStartY] = useState(0);
-    const [messageVisible, setMessageVisible] = useState(false);
+    const [successMessageVisible, setSuccessMessageVisible] = useState(false);
+    const [failureMessageVisible, setFailureMessageVisible] = useState(false);
     const [message, setMessage] = useState("");
     const [isDraggingOver, setIsDraggingOver] = useState(false);
 
@@ -53,10 +57,10 @@ const ImageToText: React.FC = () => {
         if (textAreaRef.current) {
             try {
                 await navigator.clipboard.writeText(textAreaRef.current.value);
-                setMessageVisible(true);
+                setSuccessMessageVisible(true);
                 setMessage("Copied to clipboard successfully!");
                 setTimeout(() => {
-                    setMessageVisible(false);
+                    setSuccessMessageVisible(false);
                 }, 3000);
             } catch (err) {
                 console.error("Error copied:", err);
@@ -74,6 +78,18 @@ const ImageToText: React.FC = () => {
 
     const processFile = async (file: File) => {
         if (!file) return;
+
+        if (!ALLOWED_OCR_IMAGE_TYPES.includes(file.type)) {
+            setFailureMessageVisible(true);
+            setMessage(
+                `Invalid file type. Allowed types: ${ALLOWED_OCR_IMAGE_TYPES.map((type) => type.split("/")[1]).join(", ")}`,
+            );
+            setTimeout(() => {
+                setFailureMessageVisible(false);
+            }, 3000);
+            return;
+        }
+
         setIsLoading(true);
         setBoxes([]);
         const reader = new FileReader();
@@ -236,7 +252,7 @@ const ImageToText: React.FC = () => {
                                         ref={fileInputRef}
                                         onChange={chooseFile}
                                         className="sr-only"
-                                        accept=".png,.jpg,.jpeg,.webp,.svg"
+                                        accept={ALLOWED_OCR_IMAGE_TYPES.join(",")}
                                     />
                                     <div
                                         className="text-dark mx-auto mb-5 flex aspect-square w-[68px] cursor-pointer items-center justify-center rounded-full bg-white"
@@ -260,10 +276,8 @@ const ImageToText: React.FC = () => {
                                         </svg>
                                     </div>
 
-                                    <h3 className="mb-3 text-xl font-bold text-white">Drop Image Here</h3>
-                                    <p className="mb-5 text-base text-gray-400">
-                                        Drag and drop your PNG, JPG, WebP, SVG image here or browse
-                                    </p>
+                                    <h3 className="mb-3 text-xl font-bold text-white">Drop Image Here or Browse</h3>
+                                    <p className="mb-5 text-base text-gray-400">Supports: JPEG, PNG, BMP, WEBP, TIFF</p>
                                 </div>
                             </div>
                         </div>
@@ -366,7 +380,8 @@ const ImageToText: React.FC = () => {
                 onMouseUp={handleMouseUp}
                 className="max-h-4xl mt-10 max-w-4xl"
             />
-            {messageVisible && <SuccessMessage message={message} duration={3000} />}
+            {successMessageVisible && <SuccessMessage message={message} duration={3000} />}
+            {failureMessageVisible && <FailureMessage message={message} duration={3000} />}
         </div>
     );
 };
