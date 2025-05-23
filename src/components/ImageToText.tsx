@@ -111,23 +111,38 @@ const ImageToText: React.FC = () => {
             // Call OCR API
             const formData = new FormData();
             formData.append("image", file);
-            const response = await fetch("https://ocr-image-function-432052083194.asia-southeast1.run.app", {
-                method: "POST",
-                body: formData,
-            });
-            setIsLoading(false);
-            const result = await response.json();
-            setBoxes(result.boxes);
-            const selectedText = result.boxes.map((box: { text: string }) => box.text).join(" ");
-            setText(selectedText);
+            try {
+                const response = await fetch("https://ocr-image-function-432052083194.asia-southeast1.run.app", {
+                    method: "POST",
+                    body: formData,
+                });
+                if (!response.ok) throw new Error("OCR API request failed, please try again.");
 
-            // Draw boxes
-            if (!ctx) return;
-            result.boxes.forEach((box: { x: number; y: number; width: number; height: number }) => {
-                ctx.strokeStyle = "red";
-                ctx.strokeRect(box.x, box.y, box.width, box.height);
-            });
+                const result = await response.json();
+                setBoxes(result.boxes);
+                const selectedText = result.boxes.map((box: { text: string }) => box.text).join(" ");
+                setText(selectedText);
+
+                // Draw boxes
+                if (!ctx) return;
+                result.boxes.forEach((box: { x: number; y: number; width: number; height: number }) => {
+                    ctx.strokeStyle = "red";
+                    ctx.strokeRect(box.x, box.y, box.width, box.height);
+                });
+            } catch (error) {
+                setMessage(
+                    error instanceof Error
+                        ? error.message
+                        : "An error occurred during OCR processing. Please try again.",
+                );
+                setFailureMessageVisible(true);
+                setTimeout(() => setFailureMessageVisible(false), 3000);
+                setImg(null);
+            } finally {
+                setIsLoading(false);
+            }
         };
+
         reader.readAsDataURL(file);
     };
 
