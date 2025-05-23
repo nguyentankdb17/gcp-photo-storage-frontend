@@ -4,6 +4,8 @@ import ImagePreview from "./imagePreview";
 import Loading from "./Loading";
 import SuccessMessage from "./successMessage";
 
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/bmp", "image/webp", "image/x-icon", "image/tiff"];
+
 const FileUpload: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [file, setFile] = useState<File | null>(null);
@@ -20,6 +22,15 @@ const FileUpload: React.FC = () => {
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
         if (files && files.length > 0) {
+            if (!ALLOWED_IMAGE_TYPES.includes(files[0].type)) {
+                setFile(null);
+                setErrorMessage(
+                    `Invalid file type. Allowed types: ${ALLOWED_IMAGE_TYPES.map((type) => type.split("/")[1]).join(
+                        ", ",
+                    )}`,
+                );
+                return;
+            }
             setFile(files[0]);
             setUploadedBytes(0);
         }
@@ -41,6 +52,15 @@ const FileUpload: React.FC = () => {
         setIsDraggingOver(false);
         const files = event.dataTransfer.files;
         if (files && files.length > 0) {
+            if (!ALLOWED_IMAGE_TYPES.includes(files[0].type)) {
+                setFile(null);
+                setErrorMessage(
+                    `Invalid file type. Allowed types: ${ALLOWED_IMAGE_TYPES.map((type) => type.split("/")[1]).join(
+                        ", ",
+                    )}`,
+                );
+                return;
+            }
             setFile(files[0]);
             setUploadedBytes(0);
         }
@@ -145,7 +165,7 @@ const FileUpload: React.FC = () => {
                                             ref={fileInputRef}
                                             onChange={handleFileChange}
                                             className="sr-only"
-                                            accept=".png,.jpg,.jpeg,.webp,.svg"
+                                            accept={ALLOWED_IMAGE_TYPES.join(",")}
                                         />
                                         <div
                                             className="text-dark mx-auto mb-5 flex aspect-square w-[68px] cursor-pointer items-center justify-center rounded-full bg-white"
@@ -169,10 +189,9 @@ const FileUpload: React.FC = () => {
                                             </svg>
                                         </div>
 
-                                        <h3 className="mb-3 text-xl font-bold text-white">Drop Image Here</h3>
+                                        <h3 className="mb-3 text-xl font-bold text-white">Drop Image Here or Browse</h3>
                                         <p className="mb-5 text-base text-gray-400">
-                                            Drag and drop your PNG, JPG, WebP, SVG image here
-                                            <p>or browse</p>
+                                            We support JPEG, PNG, BMP, WebP, ICO, or TIFF images
                                         </p>
                                     </div>
                                 )}
