@@ -105,9 +105,9 @@ const Home: React.FC = () => {
                                             </div>
                                             <div className="p-8 text-center sm:p-9 md:p-7 xl:p-9">
                                                 <h3>
-                                                    <a className="hover:text-primary 2xl:text-[22px mb-4 block text-xl font-semibold text-white sm:text-[22px] md:text-xl lg:text-[22px] xl:text-xl">
+                                                    <span className="hover:text-primary 2xl:text-[22px mb-4 block text-xl font-semibold text-white sm:text-[22px] md:text-xl lg:text-[22px] xl:text-xl">
                                                         {card.title}
-                                                    </a>
+                                                    </span>
                                                 </h3>
                                                 <p className="mb-7 text-base leading-relaxed text-gray-500">
                                                     {card.description}
