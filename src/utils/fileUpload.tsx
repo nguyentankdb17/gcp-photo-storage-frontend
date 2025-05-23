@@ -11,6 +11,7 @@ const FileUpload: React.FC = () => {
     const [messageVisible, setMessageVisible] = useState(false);
     const [loadingVisible, setLoadingVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [isDraggingOver, setIsDraggingOver] = useState(false);
 
     const handleButtonClick = () => {
         fileInputRef.current?.click();
@@ -18,6 +19,27 @@ const FileUpload: React.FC = () => {
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
+        if (files && files.length > 0) {
+            setFile(files[0]);
+            setUploadedBytes(0);
+        }
+    };
+
+    const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        setIsDraggingOver(true);
+    };
+
+    const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        setIsDraggingOver(false);
+    };
+
+    const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setIsDraggingOver(false);
+        const files = event.dataTransfer.files;
         if (files && files.length > 0) {
             setFile(files[0]);
             setUploadedBytes(0);
@@ -101,7 +123,14 @@ const FileUpload: React.FC = () => {
     return (
         <section className="bg-dark py-15">
             <div className="container">
-                <div className="relative mx-auto w-full max-w-[570px] rounded-[20px] bg-white/10 p-4 shadow-lg">
+                <div
+                    className={`relative mx-auto w-full max-w-[570px] rounded-[20px] border-2 bg-white/10 p-4 shadow-lg ${
+                        isDraggingOver ? "border-blue-500" : "border-white/10"
+                    }`}
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                >
                     <div className="border-dark-6 relative z-10 flex min-h-[328px] items-center justify-center rounded-2xl border border-dashed bg-white/10 p-6 md:p-10">
                         <div className="w-full text-center">
                             {!file && (
